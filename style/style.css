@@ -1,0 +1,78 @@
+/* static/css/style.css */
+
+:root {
+    --primary-color: #2c3e50;
+    --accent-color: #e67e22;
+}
+
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png') center/cover;
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    color: white;
+    margin-top: 56px;
+    /* Account for fixed navbar */
+}
+
+.navbar {
+    background-color: var(--primary-color) !important;
+}
+
+.service-card {
+    border: none;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+}
+
+.cta-section {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.contact-link {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.contact-link:hover {
+    color: #f1c40f;
+}
+
+.project-img {
+    height: 250px;
+    object-fit: cover;
+}
+
+.testimonial-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+}
+
+.stats-section {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 60px 0;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 20px;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+.more-padding {
+    padding-top: 1.2rem;
+}
