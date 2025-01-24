@@ -76,3 +76,9 @@
 .more-padding {
     padding-top: 1.2rem;
 }
+
+.spaced {
+    gap: 1rem;
+    display: flex;
+    align-items: center;
+}
