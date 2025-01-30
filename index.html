@@ -53,9 +53,21 @@
                             </div>
                             <div class="col-lg-4 text-lg-start more-padding spaced">
                                 <p class="spaced">
-                                    <a href="sms:+15035084138" class="contact-link"> <i class="fa-solid fa-comment-sms"></i> Text Us </a>
+                                    <script>
+                                        function decryptText(encoded) {
+                                            var address = atob(encoded);
+                                            window.location.href = "sms:" + address;
+                                        }
+                                    </script>
+                                    <a href="javascript:decryptText('MTUwMzUwODQxMzg=');" class="contact-link"> <i class="fa-solid fa-comment-sms"></i> Text Us </a>
 
-                                    <a href="mailto:jennifer@jedconstruction.net" class="contact-link"> <i class="fas fa-envelope"></i> Email Us </a>
+                                    <script>
+                                        function decryptEmail(encoded) {
+                                            var address = atob(encoded);
+                                            window.location.href = "mailto:" + address;
+                                        }
+                                    </script>
+                                    <a href="javascript:decryptEmail('amVubmlmZXJAamVkY29uc3RydWN0aW9uLm5ldA==');" class="contact-link"> <i class="fas fa-envelope"></i> Email Us </a>
                                 </p>
                             </div>
                         </div>
@@ -219,10 +231,22 @@
                     </div>
                     <div class="col-lg-4 text-lg-end more-padding">
                         <p>
-                            <a href="sms:+15035084138" class="contact-link"> <i class="fa-solid fa-comment-sms"></i> Text Us </a>
+                            <script>
+                                function decryptText(encoded) {
+                                    var address = atob(encoded);
+                                    window.location.href = "sms:" + address;
+                                }
+                            </script>
+                            <a href="javascript:decryptText('MTUwMzUwODQxMzg=');" class="contact-link"> <i class="fa-solid fa-comment-sms"></i> Text Us </a>
                         </p>
                         <p>
-                            <a href="mailto:jennifer@jedconstruction.net" class="contact-link"> <i class="fas fa-envelope"></i> Email Us </a>
+                            <script>
+                                function decryptEmail(encoded) {
+                                    var address = atob(encoded);
+                                    window.location.href = "mailto:" + address;
+                                }
+                            </script>
+                            <a href="javascript:decryptEmail('amVubmlmZXJAamVkY29uc3RydWN0aW9uLm5ldA==');" class="contact-link"> <i class="fas fa-envelope"></i> Email Us </a>
                         </p>
                     </div>
                 </div>
