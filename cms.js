@@ -1,8 +1,10 @@
 
+
 // CMS functionality for managing gallery images
 class GalleryCMS {
     constructor() {
         this.images = this.loadImages();
+        this.categories = this.loadCategories();
         this.initializeForm();
     }
 
@@ -11,8 +13,93 @@ class GalleryCMS {
         return stored ? JSON.parse(stored) : [];
     }
 
+    loadCategories() {
+        const stored = localStorage.getItem('galleryCategories');
+        const defaultCategories = {
+            'exterior-siding': 'Exterior Siding',
+            'roof-repairs': 'Roof Repairs',
+            'new-home': 'New Home Construction',
+            'deck-addition': 'Backyard Deck Addition'
+        };
+        return stored ? { ...defaultCategories, ...JSON.parse(stored) } : defaultCategories;
+    }
+
     saveImages() {
         localStorage.setItem('galleryImages', JSON.stringify(this.images));
+    }
+
+    saveCategories() {
+        // Only save custom categories (not default ones)
+        const customCategories = {};
+        const defaultKeys = ['exterior-siding', 'roof-repairs', 'new-home', 'deck-addition'];
+        
+        Object.keys(this.categories).forEach(key => {
+            if (!defaultKeys.includes(key)) {
+                customCategories[key] = this.categories[key];
+            }
+        });
+        
+        localStorage.setItem('galleryCategories', JSON.stringify(customCategories));
+    }
+
+    getCategories() {
+        return Object.keys(this.categories).map(key => ({
+            key: key,
+            name: this.categories[key]
+        }));
+    }
+
+    getImages() {
+        return this.images;
+    }
+
+    getImageById(id) {
+        return this.images.find(img => img.id === id);
+    }
+
+    addCategory(key, name) {
+        this.categories[key] = name;
+        this.saveCategories();
+        return true;
+    }
+
+    deleteCategory(categoryKey) {
+        // Don't allow deletion of default categories
+        const defaultKeys = ['exterior-siding', 'roof-repairs', 'new-home', 'deck-addition'];
+        if (defaultKeys.includes(categoryKey)) {
+            return false;
+        }
+
+        // Remove all images in this category
+        this.images = this.images.filter(img => img.category !== categoryKey);
+        this.saveImages();
+
+        // Remove the category
+        delete this.categories[categoryKey];
+        this.saveCategories();
+        
+        return true;
+    }
+
+    updateImage(imageId, updates) {
+        const imageIndex = this.images.findIndex(img => img.id === imageId);
+        if (imageIndex !== -1) {
+            this.images[imageIndex] = { ...this.images[imageIndex], ...updates };
+            this.saveImages();
+            return true;
+        }
+        return false;
+    }
+
+    deleteImage(imageId) {
+        const initialLength = this.images.length;
+        this.images = this.images.filter(img => img.id !== imageId);
+        
+        if (this.images.length < initialLength) {
+            this.saveImages();
+            return true;
+        }
+        return false;
     }
 
     initializeForm() {
@@ -43,9 +130,22 @@ class GalleryCMS {
             return;
         }
         
-        const category = document.getElementById('category').value;
+        let category = document.getElementById('category').value;
         const imageFile = document.getElementById('imageFile').files[0];
         const description = document.getElementById('description').value;
+        
+        // Handle custom category
+        if (category === 'custom') {
+            const customCategoryName = document.getElementById('customCategory').value.trim();
+            if (!customCategoryName) {
+                this.showMessage('Please enter a category name.', 'danger');
+                return;
+            }
+            
+            // Create category key from name
+            category = customCategoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            this.addCategory(category, customCategoryName);
+        }
         
         if (!imageFile) {
             this.showMessage('Please select an image file.', 'danger');
@@ -69,6 +169,8 @@ class GalleryCMS {
             
             // Reset form
             document.getElementById('imageForm').reset();
+            document.getElementById('customCategoryDiv').style.display = 'none';
+            document.getElementById('customCategory').required = false;
         };
         
         reader.readAsDataURL(imageFile);
@@ -76,22 +178,16 @@ class GalleryCMS {
 
     showMessage(text, type) {
         const messageDiv = document.getElementById('message');
-        messageDiv.innerHTML = `<div class="alert alert-${type}" role="alert">${text}</div>`;
-        
-        setTimeout(() => {
-            messageDiv.innerHTML = '';
-        }, 3000);
+        if (messageDiv) {
+            messageDiv.innerHTML = `<div class="alert alert-${type}" role="alert">${text}</div>`;
+            
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 3000);
+        }
     }
 
     loadGalleryImages() {
-        // Categories mapping
-        const categories = {
-            'exterior-siding': 'Exterior Siding',
-            'roof-repairs': 'Roof Repairs', 
-            'new-home': 'New Home Construction',
-            'deck-addition': 'Backyard Deck Addition'
-        };
-
         // Group images by category
         const groupedImages = {};
         this.images.forEach(image => {
@@ -109,7 +205,7 @@ class GalleryCMS {
         
         // Add new images to existing categories or create new sections
         Object.keys(groupedImages).forEach(categoryKey => {
-            const categoryName = categories[categoryKey];
+            const categoryName = this.categories[categoryKey];
             const images = groupedImages[categoryKey];
             
             // Look for existing category section
@@ -186,3 +282,4 @@ class GalleryCMS {
 document.addEventListener('DOMContentLoaded', () => {
     new GalleryCMS();
 });
+
