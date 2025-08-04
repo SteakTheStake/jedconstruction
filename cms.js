@@ -118,7 +118,23 @@ class GalleryCMS {
     }
 
     isAuthenticated() {
-        return sessionStorage.getItem('jedAdminAuth') === 'true';
+        const authToken = sessionStorage.getItem('jedAdminAuth');
+        const authTime = sessionStorage.getItem('jedAdminAuthTime');
+        const now = Date.now();
+        const SESSION_TIMEOUT = 2 * 60 * 60 * 1000; // 2 hours
+        
+        // Check if session is valid and not expired
+        const isValid = authToken === 'true' && 
+                       authTime && 
+                       (now - parseInt(authTime)) < SESSION_TIMEOUT;
+        
+        if (!isValid) {
+            // Clear expired session
+            sessionStorage.removeItem('jedAdminAuth');
+            sessionStorage.removeItem('jedAdminAuthTime');
+        }
+        
+        return isValid;
     }
 
     handleSubmit(e) {
