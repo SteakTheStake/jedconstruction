@@ -18,7 +18,10 @@ class GalleryCMS {
     initializeForm() {
         const form = document.getElementById('imageForm');
         if (form) {
-            form.addEventListener('submit', (e) => this.handleSubmit(e));
+            // Check authentication before allowing form submission
+            if (this.isAuthenticated()) {
+                form.addEventListener('submit', (e) => this.handleSubmit(e));
+            }
         }
         
         // Load existing images on home page
@@ -27,8 +30,18 @@ class GalleryCMS {
         }
     }
 
+    isAuthenticated() {
+        return sessionStorage.getItem('jedAdminAuth') === 'true';
+    }
+
     handleSubmit(e) {
         e.preventDefault();
+        
+        // Double-check authentication
+        if (!this.isAuthenticated()) {
+            this.showMessage('Authentication required. Please log in again.', 'danger');
+            return;
+        }
         
         const category = document.getElementById('category').value;
         const imageFile = document.getElementById('imageFile').files[0];

@@ -16,12 +16,42 @@
             <a class="navbar-brand" href="/">JED Construction & Remodeling</a>
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="/">Back to Home</a>
+                <a class="nav-link" href="#" id="logoutBtn" style="display: none;" onclick="logout()">Logout</a>
             </div>
         </div>
     </nav>
 
-    <!-- Add Image Form -->
-    <section class="py-5" style="margin-top: 80px;">
+    <!-- Authentication Form -->
+    <section class="py-5" id="authSection" style="margin-top: 80px;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="text-center mb-4">Admin Access Required</h3>
+                            <p class="text-center text-muted mb-4">Please enter the access code to manage gallery images.</p>
+                            
+                            <form id="authForm">
+                                <div class="mb-3">
+                                    <label for="accessCode" class="form-label">Access Code</label>
+                                    <input type="password" class="form-control" id="accessCode" required placeholder="Enter access code">
+                                </div>
+                                
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">Access Admin Panel</button>
+                                </div>
+                            </form>
+                            
+                            <div id="authMessage" class="mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add Image Form (Hidden by default) -->
+    <section class="py-5" id="adminSection" style="margin-top: 80px; display: none;">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-8">
@@ -66,5 +96,60 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="cms.js"></script>
+    <script>
+        // Simple authentication system
+        const ACCESS_CODE = 'JED2024Admin!'; // Change this to your desired access code
+        
+        function checkAuth() {
+            const isAuthenticated = sessionStorage.getItem('jedAdminAuth') === 'true';
+            
+            if (isAuthenticated) {
+                document.getElementById('authSection').style.display = 'none';
+                document.getElementById('adminSection').style.display = 'block';
+                document.getElementById('logoutBtn').style.display = 'block';
+            } else {
+                document.getElementById('authSection').style.display = 'block';
+                document.getElementById('adminSection').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'none';
+            }
+        }
+        
+        function showAuthMessage(text, type) {
+            const messageDiv = document.getElementById('authMessage');
+            messageDiv.innerHTML = `<div class="alert alert-${type}" role="alert">${text}</div>`;
+            
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 3000);
+        }
+        
+        function logout() {
+            sessionStorage.removeItem('jedAdminAuth');
+            checkAuth();
+            showAuthMessage('Logged out successfully.', 'info');
+        }
+        
+        // Handle authentication form
+        document.getElementById('authForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const enteredCode = document.getElementById('accessCode').value;
+            
+            if (enteredCode === ACCESS_CODE) {
+                sessionStorage.setItem('jedAdminAuth', 'true');
+                checkAuth();
+                showAuthMessage('Access granted! Welcome to the admin panel.', 'success');
+                document.getElementById('accessCode').value = '';
+            } else {
+                showAuthMessage('Invalid access code. Please try again.', 'danger');
+                document.getElementById('accessCode').value = '';
+            }
+        });
+        
+        // Check authentication status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+        });
+    </script>
 </body>
 </html>
