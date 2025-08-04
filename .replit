@@ -2,3 +2,15 @@ modules = ["web"]
 
 [nix]
 channel = "stable-25_05"
+
+[workflows]
+runButton = "Static Server"
+
+[[workflows.workflow]]
+name = "Static Server"
+author = 42015197
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 -m http.server 5000 --bind 0.0.0.0"
