@@ -32,13 +32,13 @@ class GalleryCMS {
         // Only save custom categories (not default ones)
         const customCategories = {};
         const defaultKeys = ['exterior-siding', 'roof-repairs', 'new-home', 'deck-addition'];
-        
+
         Object.keys(this.categories).forEach(key => {
             if (!defaultKeys.includes(key)) {
                 customCategories[key] = this.categories[key];
             }
         });
-        
+
         localStorage.setItem('galleryCategories', JSON.stringify(customCategories));
     }
 
@@ -77,7 +77,7 @@ class GalleryCMS {
         // Remove the category
         delete this.categories[categoryKey];
         this.saveCategories();
-        
+
         return true;
     }
 
@@ -94,7 +94,7 @@ class GalleryCMS {
     deleteImage(imageId) {
         const initialLength = this.images.length;
         this.images = this.images.filter(img => img.id !== imageId);
-        
+
         if (this.images.length < initialLength) {
             this.saveImages();
             return true;
@@ -110,7 +110,7 @@ class GalleryCMS {
                 form.addEventListener('submit', (e) => this.handleSubmit(e));
             }
         }
-        
+
         // Load existing images on home page
         if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
             this.loadGalleryImages();
@@ -122,34 +122,34 @@ class GalleryCMS {
         const authTime = sessionStorage.getItem('jedAdminAuthTime');
         const now = Date.now();
         const SESSION_TIMEOUT = 2 * 60 * 60 * 1000; // 2 hours
-        
+
         // Check if session is valid and not expired
-        const isValid = authToken === 'true' && 
-                       authTime && 
-                       (now - parseInt(authTime)) < SESSION_TIMEOUT;
-        
+        const isValid = authToken === 'true' &&
+            authTime &&
+            (now - parseInt(authTime)) < SESSION_TIMEOUT;
+
         if (!isValid) {
             // Clear expired session
             sessionStorage.removeItem('jedAdminAuth');
             sessionStorage.removeItem('jedAdminAuthTime');
         }
-        
+
         return isValid;
     }
 
     handleSubmit(e) {
         e.preventDefault();
-        
+
         // Double-check authentication
         if (!this.isAuthenticated()) {
             this.showMessage('Authentication required. Please log in again.', 'danger');
             return;
         }
-        
+
         let category = document.getElementById('category').value;
         const imageFile = document.getElementById('imageFile').files[0];
         const description = document.getElementById('description').value;
-        
+
         // Handle custom category
         if (category === 'custom') {
             const customCategoryName = document.getElementById('customCategory').value.trim();
@@ -157,12 +157,12 @@ class GalleryCMS {
                 this.showMessage('Please enter a category name.', 'danger');
                 return;
             }
-            
+
             // Create category key from name
             category = customCategoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
             this.addCategory(category, customCategoryName);
         }
-        
+
         if (!imageFile) {
             this.showMessage('Please select an image file.', 'danger');
             return;
@@ -182,13 +182,13 @@ class GalleryCMS {
             this.images.push(imageData);
             this.saveImages();
             this.showMessage('Image added successfully!', 'success');
-            
+
             // Reset form
             document.getElementById('imageForm').reset();
             document.getElementById('customCategoryDiv').style.display = 'none';
             document.getElementById('customCategory').required = false;
         };
-        
+
         reader.readAsDataURL(imageFile);
     }
 
@@ -196,7 +196,7 @@ class GalleryCMS {
         const messageDiv = document.getElementById('message');
         if (messageDiv) {
             messageDiv.innerHTML = `<div class="alert alert-${type}" role="alert">${text}</div>`;
-            
+
             setTimeout(() => {
                 messageDiv.innerHTML = '';
             }, 3000);
@@ -218,15 +218,15 @@ class GalleryCMS {
         if (!projectsSection) return;
 
         const container = projectsSection.querySelector('.container');
-        
+
         // Add new images to existing categories or create new sections
         Object.keys(groupedImages).forEach(categoryKey => {
             const categoryName = this.categories[categoryKey];
             const images = groupedImages[categoryKey];
-            
+
             // Look for existing category section
             let categorySection = this.findCategorySection(container, categoryName);
-            
+
             if (!categorySection) {
                 // Create new category section
                 categorySection = this.createCategorySection(categoryName, images);
@@ -261,34 +261,34 @@ class GalleryCMS {
     createCategorySection(categoryName, images) {
         const section = document.createElement('div');
         section.className = 'mb-8 bottom-margin';
-        
+
         const heading = document.createElement('h3');
         heading.className = 'text-xl mb-4';
         heading.textContent = categoryName;
-        
+
         const gridContainer = document.createElement('div');
         gridContainer.className = 'grid grid-cols-1 md:grid-cols-3 gap-4 grid-img';
-        
+
         images.forEach(image => {
             const imageCard = this.createImageCard(image);
             gridContainer.appendChild(imageCard);
         });
-        
+
         section.appendChild(heading);
         section.appendChild(gridContainer);
-        
+
         return section;
     }
 
     createImageCard(image) {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'card img';
-        
+
         const img = document.createElement('img');
         img.src = image.src;
         img.className = 'w-full h-64 object-cover';
         img.alt = image.description;
-        
+
         cardDiv.appendChild(img);
         return cardDiv;
     }
