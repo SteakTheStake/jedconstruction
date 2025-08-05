@@ -163,7 +163,17 @@
         // Secure authentication system with hashing and salt
         // To set a new password, run: await hashPassword('YourNewPassword') in browser console
         const SALT = 'JED_CONSTRUCTION_2024_SECURE_SALT_STRING';
-        const PASSWORD_HASH = '8f3e4a5c9d7b2e1f6a8c4d9e7b2f5a8c3e6d9b2f5a8c4e7d0b3f6a9c2e5d8f1a4'; // Password: 'Adm!n!mgUpload2025'
+        
+        // Generate the correct hash for the password
+        let PASSWORD_HASH = '';
+        
+        // Initialize the correct password hash
+        async function initializePasswordHash() {
+            PASSWORD_HASH = await hashPassword('Adm!n!mgUpload2025');
+        }
+        
+        // Call initialization
+        initializePasswordHash();
         
         // Secure password hashing function
         async function hashPassword(password) {
@@ -254,6 +264,11 @@
             await new Promise(resolve => setTimeout(resolve, 1000));
             
             const enteredHash = await hashPassword(enteredCode);
+            
+            // Ensure PASSWORD_HASH is initialized
+            if (!PASSWORD_HASH) {
+                PASSWORD_HASH = await hashPassword('Adm!n!mgUpload2025');
+            }
             
             if (enteredHash === PASSWORD_HASH) {
                 // Reset failed attempts on success
